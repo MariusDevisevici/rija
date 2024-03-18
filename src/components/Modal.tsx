@@ -5,8 +5,6 @@ interface IModalProps {
   headerText: string;
   isVisible: boolean;
   onClose: () => void;
-  onConfirm?: () => void;
-  //   childred: React.ReactNode;
 }
 
 const Modal = ({
@@ -14,7 +12,6 @@ const Modal = ({
   headerText,
   isVisible,
   onClose,
-  onConfirm,
 }: IModalProps) => {
   const dialogRef = useRef<null | HTMLDialogElement>(null);
 
@@ -41,28 +38,28 @@ const Modal = ({
     dialogRef.current?.close();
   };
 
-  const onConfirmHandler = () => {
-    if (onConfirm) {
-      onConfirm();
-      onClose();
-    }
-  };
-  console.log("Asdasd");
-
   return (
     <dialog ref={dialogRef} className="min-w-40 rounded-sm">
-      <header className="w-full items-center bg-secondary p-2 text-white">
+      <header className="flex w-full select-none items-center gap-4 bg-secondary p-2 text-white">
         <h1 className="text-xl">{headerText}</h1>
+        <Button onClick={onCloseHandler}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="h-6 w-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18 18 6M6 6l12 12"
+            />
+          </svg>
+        </Button>
       </header>
       {modalContent}
-      <div className="flex w-full justify-end gap-2 bg-secondary p-2">
-        {onConfirm && (
-          <Button variant="primary" onClick={onConfirmHandler}>
-            Confirm
-          </Button>
-        )}
-        <Button onClick={onCloseHandler}>Close</Button>
-      </div>
     </dialog>
   );
 };

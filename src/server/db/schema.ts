@@ -16,24 +16,24 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = sqliteTableCreator((name) => `rija_${name}`);
 
-export const projects = createTable(
-  "projects",
-  {
-    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-    name: text("name", { length: 256 }),
-    createdById: text("createdById", { length: 255 })
-      .notNull()
-      .references(() => users.id),
-    createdAt: int("created_at", { mode: "timestamp" })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: int("updatedAt", { mode: "timestamp" }),
-  },
-  (example) => ({
-    createdByIdIdx: index("createdById_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
+export const projects = createTable("projects", {
+  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  name: text("name", { length: 256 }).notNull().default("User"),
+  user_id: text("user_id", { length: 255 }).notNull(),
+  createdAt: text("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: text("updatedAt")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+});
+
+export const projectsRelations = relations(projects, ({ one }) => ({
+  users: one(users, {
+    fields: [projects.user_id],
+    references: [users.id],
   }),
-);
+}));
 
 export const users = createTable("user", {
   id: text("id", { length: 255 }).notNull().primaryKey(),
@@ -47,6 +47,7 @@ export const users = createTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  projects: many(projects),
 }));
 
 export const accounts = createTable(

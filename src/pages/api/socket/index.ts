@@ -28,8 +28,8 @@ export default function handler(
     res.socket.server.io = io;
 
     io.on("connection", (socket) => {
-      socket.on("input-change", (msg) => {
-        socket.broadcast.emit("update-input", msg);
+      socket.on("mouse-position-update", (msg) => {
+        socket.broadcast.emit("update-mouse-position", msg);
       });
     });
   }
