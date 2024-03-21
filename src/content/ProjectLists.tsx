@@ -70,9 +70,9 @@ const ProjectLists = ({ userName }: IProjectLists) => {
       {projects?.map((p, i: number) => {
         return <ProjectCard projectName={p.name} key={i} createdAt={p.createdAt} updatedAt={p.updatedAt} />;
       })}
-      {isModalVisible && (
+      {!isModalVisible && (
         <CreateProjectModal
-          isVisible={isModalVisible}
+          isVisible={!isModalVisible}
           onClose={onModalCloseHandler}
         />
       )}

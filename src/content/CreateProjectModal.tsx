@@ -11,6 +11,7 @@ interface ICreateProjectModal {
 
 type FormValues = {
   name: string;
+  description: string;
 };
 
 const CreateProjectModal = ({ isVisible, onClose }: ICreateProjectModal) => {
@@ -25,7 +26,7 @@ const CreateProjectModal = ({ isVisible, onClose }: ICreateProjectModal) => {
     });
 
     const onSubmit: SubmitHandler<FormValues> = (d) => {
-      mutate({ name: d.name });
+      mutate({ name: d.name, description: d.description });
       onClose();
     };
     return (
@@ -37,8 +38,16 @@ const CreateProjectModal = ({ isVisible, onClose }: ICreateProjectModal) => {
           <span className="font-bold text-gray-600">Name:</span>
           <input
             type="text"
-            className="rounded-sm border border-secondary p-1 outline-secondary"
+            className="rounded-md border border-secondary p-1 outline-secondary"
             {...register("name", { required: true })}
+          />
+        </label>
+        <label className="flex flex-col">
+          <span className="font-bold text-gray-600">Description:</span>
+          <input
+            type="text"
+            className="rounded-md border border-secondary p-1 outline-secondary"
+            {...register("description")}
           />
         </label>
         <Button type="submit" variant="primary">

@@ -18,8 +18,9 @@ export const createTable = sqliteTableCreator((name) => `rija_${name}`);
 
 export const projects = createTable("projects", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  name: text("name", { length: 256 }).notNull().default("User"),
-  user_id: text("user_id", { length: 255 }).notNull(),
+  name: text("name", { length: 256 }).notNull().default("User"), //fix this
+  author_id: text("author_id", { length: 255 }).notNull(),
+  description: text("description"),
   createdAt: text("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -28,11 +29,36 @@ export const projects = createTable("projects", {
     .notNull(),
 });
 
-export const projectsRelations = relations(projects, ({ one }) => ({
+export const usersOnProjects = createTable("user_projects_access", {
+  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  projectId: int("project_id")
+    .notNull()
+    .references(() => projects.id),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+});
+
+export const usersOnProjectsRelations = relations(
+  usersOnProjects,
+  ({ one }) => ({
+    users: one(users, {
+      fields: [usersOnProjects.userId],
+      references: [users.id],
+    }),
+    projects: one(projects, {
+      fields: [usersOnProjects.projectId],
+      references: [projects.id],
+    }),
+  }),
+);
+
+export const projectsRelations = relations(projects, ({ one, many }) => ({
   users: one(users, {
-    fields: [projects.user_id],
+    fields: [projects.author_id],
     references: [users.id],
   }),
+  usersProjects: many(usersOnProjects),
 }));
 
 export const users = createTable("user", {
@@ -110,3 +136,9 @@ export const verificationTokens = createTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
 );
+
+export const organizations = createTable("organization", {
+  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  name: text("org_name").notNull(),
+});
+

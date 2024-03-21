@@ -5,16 +5,23 @@ export const projectRouter = createTRPCRouter({
   read: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.query.projects.findMany({
       with: {
-        users: true,
+        usersProjects: true,
+        users: {
+          columns: {
+            name: true,
+            image: true,
+          },
+        },
       },
     });
   }),
   create: protectedProcedure
-    .input(z.object({ name: z.string().min(2) }))
+    .input(z.object({ name: z.string().min(2), description: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.db.insert(projects).values({
         name: input.name,
-        user_id: ctx.session.user.id,
+        description: input.description,
+        author_id: ctx.session.user.id,
       });
     }),
 });
